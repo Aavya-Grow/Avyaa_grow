@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aavya Grow — Organic Mushroom &amp; Microgreens Survey</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root{
+  --soil:#1E2A1B;
+  --soil-deep:#141D12;
+  --cap-cream:#F6F1E4;
+  --cap-cream-soft:#EDE6D3;
+  --leaf:#5C7A3F;
+  --leaf-bright:#7FA355;
+  --mushroom-brown:#8B5E3C;
+  --tan:#D9BE93;
+  --ink:#241E14;
+  --ink-soft:#5A5240;
+  --error:#A8462F;
+  --radius:14px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+body{
+  background:
+    radial-gradient(circle at 15% 10%, rgba(127,163,85,0.10), transparent 45%),
+    radial-gradient(circle at 85% 90%, rgba(139,94,60,0.14), transparent 50%),
+    var(--soil);
+  color:var(--ink);
+  font-family:'Work Sans', sans-serif;
+  min-height:100vh;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:32px 16px 60px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+}
+
+.wrap{
+  width:100%;
+  max-width:640px;
+}
+
+/* Header outside the card, on soil */
+.top-header{
+  text-align:center;
+  margin-bottom:22px;
+  color:var(--cap-cream);
+}
+.eyebrow{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--leaf-bright);
+  margin-bottom:8px;
+}
+.top-header h1{
+  font-family:'Fraunces', serif;
+  font-weight:600;
+  font-size:clamp(26px,5vw,36px);
+  line-height:1.15;
+  color:var(--cap-cream);
+}
+.top-header p{
+  margin-top:8px;
+  font-size:14px;
+  color:var(--tan);
+  max-width:460px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+/* Sprout progress — the signature element */
+.sprout-track{
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  gap:10px;
+  height:46px;
+  margin:22px 0 4px;
+}
+.sprout{
+  width:6px;
+  border-radius:3px 3px 0 0;
+  background:rgba(246,241,228,0.18);
+  transition:height 0.5s cubic-bezier(.34,1.56,.64,1), background 0.4s ease;
+  position:relative;
+}
+.sprout.active{ background:var(--leaf-bright); }
+.sprout.active::before{
+  content:'';
+  position:absolute;
+  top:-7px; left:50%;
+  transform:translateX(-50%);
+  width:12px; height:12px;
+  border-radius:50% 50% 50% 0;
+  background:var(--leaf-bright);
+  rotate:-45deg;
+}
+.stage-label{
+  text-align:center;
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:0.08em;
+  color:var(--tan);
+  text-transform:uppercase;
+  margin-bottom:18px;
+}
+
+/* Card */
+.card{
+  background:var(--cap-cream);
+  border-radius:var(--radius);
+  padding:36px 32px 32px;
+  box-shadow:0 24px 60px rgba(0,0,0,0.35);
+  position:relative;
+  overflow:hidden;
+}
+.card::before{
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:5px;
+  background:linear-gradient(90deg,var(--leaf) 0%,var(--mushroom-brown) 50%,var(--leaf) 100%);
+}
+
+.section{ display:none; animation:fadeUp 0.4s ease; }
+.section.visible{ display:block; }
+@keyframes fadeUp{
+  from{opacity:0; transform:translateY(10px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+.section-tag{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--leaf);
+  background:rgba(92,122,63,0.10);
+  border:1px solid rgba(92,122,63,0.25);
+  padding:4px 10px;
+  border-radius:100px;
+  margin-bottom:14px;
+}
+.section-tag.brown{ color:var(--mushroom-brown); background:rgba(139,94,60,0.10); border-color:rgba(139,94,60,0.25); }
+
+.section h2{
+  font-family:'Fraunces', serif;
+  font-weight:600;
+  font-size:24px;
+  color:var(--ink);
+  margin-bottom:6px;
+}
+.section .sub{
+  font-size:13.5px;
+  color:var(--ink-soft);
+  margin-bottom:22px;
+  line-height:1.5;
+}
+
+.q{ margin-bottom:22px; }
+.q label.qtext{
+  display:block;
+  font-size:15px;
+  font-weight:500;
+  color:var(--ink);
+  margin-bottom:10px;
+  line-height:1.4;
+}
+.q .hint{
+  font-size:12px;
+  color:var(--ink-soft);
+  margin-top:-6px;
+  margin-bottom:10px;
+}
+
+.options{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.opt-btn{
+  border:1.5px solid rgba(36,30,20,0.15);
+  background:#fff;
+  color:var(--ink);
+  padding:9px 16px;
+  border-radius:100px;
+  font-family:'Work Sans', sans-serif;
+  font-size:13.5px;
+  cursor:pointer;
+  transition:all 0.18s ease;
+}
+.opt-btn:hover{ border-color:var(--leaf); }
+.opt-btn.selected{
+  background:var(--leaf);
+  border-color:var(--leaf);
+  color:#fff;
+  font-weight:500;
+}
+.opt-btn:focus-visible{ outline:2px solid var(--mushroom-brown); outline-offset:2px; }
+
+.opt-btn.multi.selected{ background:var(--mushroom-brown); border-color:var(--mushroom-brown); }
+
+input[type="text"], input[type="tel"], input[type="number"]{
+  width:100%;
+  border:1.5px solid rgba(36,30,20,0.15);
+  background:#fff;
+  border-radius:8px;
+  padding:11px 14px;
+  font-family:'Work Sans', sans-serif;
+  font-size:14px;
+  color:var(--ink);
+}
+input:focus{ outline:2px solid var(--leaf); outline-offset:1px; border-color:var(--leaf); }
+input::placeholder{ color:#b3ab98; }
+
+.skip-block{
+  display:none;
+  border-left:2px solid var(--tan);
+  padding-left:14px;
+  margin-top:2px;
+}
+.skip-block.show{ display:block; animation:fadeUp 0.3s ease; }
+
+/* nav buttons */
+.nav-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:28px;
+  padding-top:20px;
+  border-top:1px solid rgba(36,30,20,0.10);
+}
+.btn{
+  font-family:'Work Sans', sans-serif;
+  font-size:14px;
+  font-weight:500;
+  padding:11px 22px;
+  border-radius:100px;
+  border:none;
+  cursor:pointer;
+  transition:transform 0.15s ease, box-shadow 0.15s ease;
+}
+.btn:active{ transform:scale(0.97); }
+.btn-primary{ background:var(--leaf); color:#fff; }
+.btn-primary:hover{ box-shadow:0 6px 16px rgba(92,122,63,0.35); }
+.btn-ghost{ background:transparent; color:var(--ink-soft); }
+.btn-ghost:hover{ color:var(--ink); }
+.btn-primary:disabled{ background:#c9c2ac; cursor:not-allowed; box-shadow:none; }
+
+.error-msg{
+  font-size:12.5px;
+  color:var(--error);
+  margin-top:-14px;
+  margin-bottom:16px;
+  display:none;
+}
+.error-msg.show{ display:block; }
+
+/* thank you */
+.thanks{ text-align:center; padding:10px 0 6px; }
+.thanks .icon{ font-size:40px; margin-bottom:12px; }
+.thanks h2{ font-family:'Fraunces',serif; font-size:26px; margin-bottom:10px; }
+.thanks p{ color:var(--ink-soft); font-size:14px; line-height:1.6; max-width:420px; margin:0 auto 20px; }
+
+footer{
+  text-align:center;
+  color:rgba(246,241,228,0.4);
+  font-size:11.5px;
+  margin-top:24px;
+  font-family:'JetBrains Mono', monospace;
+  letter-spacing:0.04em;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top-header">
+    <div class="eyebrow">Aavya Grow &middot; Market Research</div>
+    <h1>Help us grow the right way</h1>
+    <p>A 5-minute survey on organic mushrooms, microgreens &amp; leafy greens — your answers shape what we grow first.</p>
+  </div>
+
+  <div class="sprout-track" id="sproutTrack"></div>
+  <div class="stage-label" id="stageLabel">Stage 1 of 7</div>
+
+  <div class="card">
+    <form id="surveyForm" novalidate>
+
+      <!-- SECTION 1: Awareness & Attitudes -->
+      <div class="section visible" data-section="0">
+        <div class="section-tag">🌱 Section 1</div>
+        <h2>Let's get started</h2>
+        <p class="sub">Just a name so we know who to thank, then two quick ones on awareness.</p>
+
+        <div class="q">
+          <label class="qtext">What should we call you? <span style="font-weight:400; color:var(--ink-soft);">(optional)</span></label>
+          <input type="text" data-name="respondentName" data-optional="true" placeholder="Your name">
+        </div>
+
+        <div class="q">
+          <label class="qtext">1. How familiar are you with organic products or sustainable food production?</label>
+          <div class="options" data-name="organicAwareness">
+            <button type="button" class="opt-btn">Very familiar</button>
+            <button type="button" class="opt-btn">Somewhat familiar</button>
+            <button type="button" class="opt-btn">Heard of it, don't know much</button>
+            <button type="button" class="opt-btn">Not familiar at all</button>
+          </div>
+          <div class="error-msg">Please select one option.</div>
+        </div>
+
+        <div class="q">
+          <label class="qtext">2. Would you be willing to pay more for organic food or shift toward healthier food options?</label>
+          <div class="options" data-name="willingToShift">
+            <button type="button" class="opt-btn">Yes, already doing this</button>
+            <button type="button" class="opt-btn">Yes, would like to</button>
+            <button type="button" class="opt-btn">Maybe, depends on price</button>
+            <button type="button" class="opt-btn">Not really</button>
+          </div>
+          <div class="error-msg">Please select one option.</div>
+        </div>
+      </div>
+
+      <!-- SECTION 2: Mushrooms -->
+      <div class="section" data-section="1" data-category="Mushrooms">
+        <div class="section-tag brown">🍄 Section 2</div>
+        <h2>Mushrooms</h2>
+        <p class="sub">Button, oyster, shiitake, and other varieties.</p>
+
+        <div class="q">
+          <label class="qtext">3. How aware are you of mushroom varieties (button, oyster, shiitake, etc.)?</label>
+          <div class="options" data-name="mushrooms_awareness">
+            <button type="button" class="opt-btn">Know several varieties</button>
+            <button type="button" class="opt-btn">Know a couple</button>
+            <button type="button" class="opt-btn">Only know the common ones</button>
+            <button type="button" class="opt-btn">Not aware</button>
+          </div>
+          <div class="error-msg">Please select one option.</div>
+        </div>
+
+        <div class="q">
+          <label class="qtext">4. Do you currently buy mushrooms?</label>
+          <div class="options" data-name="mushrooms_buys">
+            <button type="button" class="opt-btn">Yes</button>
+            <button type="button" class="opt-btn">No</button>
+          </div>
+          <div class="error-msg">Please select one option.</div>
+
+          <div class="skip-block" data-skip-for="mushrooms_buys">
+            <div class="hint">Where do you usually buy it, and roughly how much? (select all that apply)</div>
+            <div class="options" data-name="mushrooms_where" data-multi="true" style="margin-bottom:14px;">
+              <button type="button" class="opt-btn multi">Supermarket</button>
+              <button type="button" class="opt-btn multi">Local market / mandi</button>
+              <button type="button" class="opt-btn multi">Online</button>
+              <button type="button" class="opt-btn multi">Other</button>
+            </div>
+            <input type="text" data-name="mushrooms_qty" placeholder="Typical quantity bought (e.g. 200g/week)">
+            <div style="height:10px;"></div>
+            <input type="text" data-name="mushrooms_price" placeholder="Price you usually pay (e.g. ₹80 for 200g)">
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 3: Microgreens -->
+      <div class="section" data-section="2" data-category="Microgreens">
+        <div class="section-tag">🌿 Section 3</div>
+        <h2>Microgreens</h2>
+        <p class="sub">Pea shoots, radish, sunflower, and similar.</p>
+
+        <div class="q">
+          <label class="qtext">5. How aware are you of microgreens as a category?</label>
+          <div class="options" data-name="microgreens_awareness">
+            <button type="button" class="opt-btn">Know several varieties</button>
+            <button type="button" class="opt-btn">Know a couple</button>
+            <button type="button" class="opt-btn">Heard the term, not sure what it is</button>
+            <button type="button" class="opt-btn">Not aware</button>
+          </div>
+          <div class="error-msg">Please select one option.</div>
+        </div>
+
+        <div class="q">
+          <label class="qtext">6. Do you currently buy microgreens?</label>
+          <div class="options" data-name="microgreens_buys">
+            <button type="button" class="opt-btn">Yes</button>
+            <button type="button" class="opt-btn">No</button>
+          </div>
+          <div class="error-msg">Please select one option.</div>
+
+          <div class="skip-block" data-skip-for="microgreens_buys">
+            <div class="hint">Where do you usually buy it, and roughly how much? (select all that apply)</div>
+            <div class="options" data-name="microgreens_where" data-multi="true" style="margin-bottom:14px;">
+              <button type="button" class="opt-btn multi">Supermarket</button>
+              <button type="button" class="opt-btn multi">Local market / mandi</button>
+              <button type="button" class="opt-btn multi">Online</button>
+              <button type="button" class="opt-btn multi">Other</button>
+            </div>
+            <input type="text" data-name="microgreens_qty" placeholder="Typical quantity bought (e.g. 100g/week)">
+            <div style="height:10px;"></div>
+            <input type="text" data-name="microgreens_price" placeholder="Price you usually pay (e.g. ₹60 for 100g)">
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 4: Leafy Greens & Herbs -->
+      <div class="section" data-section="3" data-category="Leafy Greens & Herbs">
+        <div class="section-tag">🥬 Section 4</div>
+        <h2>Leafy greens &amp; herbs</h2>
+        <p class="sub">Spinach, lettuce, basil, mint, and similar.</p>
+
+        <div class="q">
+          <label class="qtext">7. How aware are you of organic leafy greens &amp; herb varieties?</label>
+          <div class="options" data-name="leafy_awareness">
+            <button type="button" class="opt-btn">Know several varieties</button>
+            <button type="button" class="opt-btn">Know a couple</button>
+            <button type="button" class="opt-btn">Only know the common ones</button>
+            <button type="button" class="opt-btn">Not aware</button>
+          </div>
+          <div class="error-msg">Please select one option.</div>
+        </div>
+
+        <div class="q">
+          <label class="qtext">8. Do you currently buy leafy greens or herbs?</label>
+          <div class="options" data-name="leafy_buys">
+            <button type="button" class="opt-btn">Yes</button>
+            <button type="button" class="opt-btn">No</button>
+          </div>
+          <div class="error-msg">Please select one option.</div>
+
+          <div class="skip-block" data-skip-for="leafy_buys">
+            <div class="hint">Where do you usually buy it, and roughly how much? (select all that apply)</div>
+            <div class="options" data-name="leafy_where" data-multi="true" style="margin-bottom:14px;">
+              <button type="button" class="opt-btn multi">Supermarket</button>
+              <button type="button" class="opt-btn multi">Local market / mandi</button>
+              <button type="button" class="opt-btn multi">Online</button>
+              <button type="button" class="opt-btn multi">Other</button>
+            </div>
+            <input type="text" data-name="leafy_qty" placeholder="Typical quantity bought (e.g. 500g/week)">
+            <div style="height:10px;"></div>
+            <input type="text" data-name="leafy_price" placeholder="Price you usually pay (e.g. ₹40 for 500g)">
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 5: Purchase preferences -->
+      <div class="section" data-section="4">
+        <div class="section-tag">🛒 Section 5</div>
+        <h2>Purchase preferences</h2>
+        <p class="sub">How you'd want to buy these, if organic were easily available.</p>
+
+        <div class="q">
+          <label class="qtext">9. How would you prefer to buy organic mushrooms/microgreens/greens? <span style="font-weight:400; color:var(--ink-soft);">(select all that apply)</span></label>
+          <div class="options" data-name="preferredChannel" data-multi="true">
+            <button type="button" class="opt-btn multi">Local market stall</button>
+            <button type="button" class="opt-btn multi">Supermarket</button>
+            <button type="button" class="opt-btn multi">Online, one-time orders</button>
+            <button type="button" class="opt-btn multi">Subscription / weekly box</button>
+          </div>
+          <div class="error-msg">Please select at least one option.</div>
+        </div>
+
+        <div class="q">
+          <label class="qtext">10. How often would you likely buy?</label>
+          <div class="options" data-name="frequency">
+            <button type="button" class="opt-btn">Weekly</button>
+            <button type="button" class="opt-btn">Every 2 weeks</button>
+            <button type="button" class="opt-btn">Monthly</button>
+            <button type="button" class="opt-btn">Occasionally</button>
+          </div>
+          <div class="error-msg">Please select one option.</div>
+        </div>
+      </div>
+
+      <!-- SECTION 6: Demographics -->
+      <div class="section" data-section="5">
+        <div class="section-tag">📍 Section 6</div>
+        <h2>Just a couple more</h2>
+        <p class="sub">Helps us understand who we're growing for.</p>
+
+        <div class="q">
+          <label class="qtext">11. Household size</label>
+          <div class="options" data-name="householdSize">
+            <button type="button" class="opt-btn">1–2</button>
+            <button type="button" class="opt-btn">3–4</button>
+            <button type="button" class="opt-btn">5+</button>
+          </div>
+          <div class="error-msg">Please select one option.</div>
+        </div>
+
+        <div class="q">
+          <label class="qtext">12. Which city / area are you in?</label>
+          <input type="text" data-name="cityArea" placeholder="e.g. South Delhi">
+          <div class="error-msg">Please tell us your city or area.</div>
+        </div>
+      </div>
+
+      <!-- SECTION 7: Early access (optional) -->
+      <div class="section" data-section="6">
+        <div class="section-tag">✨ Section 7 — Optional</div>
+        <h2>Want first access?</h2>
+        <p class="sub">Would you like to be one of our first customers when we launch?</p>
+
+        <div class="q">
+          <div class="options" data-name="wantsEarlyAccess">
+            <button type="button" class="opt-btn">Yes, count me in</button>
+            <button type="button" class="opt-btn">No thanks</button>
+          </div>
+
+          <div class="skip-block" data-skip-for="wantsEarlyAccess" data-skip-value="Yes, count me in">
+            <div style="height:14px;"></div>
+            <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="10" data-name="contactPhone" data-numeric="true" placeholder="Phone / WhatsApp number">
+            <div style="height:10px;"></div>
+            <input type="text" data-name="contactPin" placeholder="Area / PIN code">
+          </div>
+        </div>
+      </div>
+
+      <!-- THANK YOU -->
+      <div class="section" data-section="7">
+        <div class="thanks">
+          <div class="icon" id="thanksIcon">🌱</div>
+          <h2 id="thanksHeading">Thank you for growing with us!</h2>
+          <p id="thanksMessage">Your answers help us figure out exactly what to grow, and at what price, before we launch. If you opted in for early access, we'll reach out on WhatsApp.</p>
+          <button type="button" class="btn btn-ghost" id="backupDownloadBtn" style="border:1px solid rgba(36,30,20,0.15); font-size:12px; padding:8px 16px;">Download my response (backup)</button>
+        </div>
+      </div>
+
+      <div class="nav-row" id="navRow">
+        <button type="button" class="btn btn-ghost" id="backBtn">Back</button>
+        <button type="button" class="btn btn-primary" id="nextBtn">Continue</button>
+      </div>
+
+    </form>
+  </div>
+
+  <footer>aavya grow &middot; organic mushrooms &amp; microgreens</footer>
+</div>
+
+<script>
+(function(){
+  // ---- Google Sheets connection ----
+  // Paste your Apps Script Web App URL here (see setup-instructions.md).
+  // Leave as-is only while testing — responses won't be saved anywhere until this is set.
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw1xTVrhGUYNwqPjTQGjjRGIC-KJQbyqUidTkGBzJEBogqIQe58uarZIhAzmkdaxWaA/exec";
+
+  const FIELD_ORDER = [
+    'respondentName',
+    'organicAwareness','willingToShift',
+    'mushrooms_awareness','mushrooms_buys','mushrooms_where','mushrooms_qty','mushrooms_price',
+    'microgreens_awareness','microgreens_buys','microgreens_where','microgreens_qty','microgreens_price',
+    'leafy_awareness','leafy_buys','leafy_where','leafy_qty','leafy_price',
+    'preferredChannel','frequency','householdSize','cityArea',
+    'wantsEarlyAccess','contactPhone','contactPin'
+  ];
+
+  function buildPayload(){
+    const payload = { timestamp: new Date().toISOString() };
+    FIELD_ORDER.forEach(k => { payload[k] = answers[k] || ''; });
+    return payload;
+  }
+
+  function submitToSheet(payload){
+    if(!SCRIPT_URL || SCRIPT_URL.indexOf('PASTE_YOUR') === 0){
+      console.warn('Survey: SCRIPT_URL not configured — response was NOT saved to Google Sheets. See setup-instructions.md.');
+      return Promise.resolve(false);
+    }
+    return fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors', // Apps Script web apps don't return CORS headers; response body is opaque but the write still succeeds
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    }).then(() => true).catch(err => {
+      console.error('Survey: failed to reach Google Sheets endpoint', err);
+      return false;
+    });
+  }
+
+  function downloadBackup(payload){
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'survey-response-' + Date.now() + '.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  const sections = Array.from(document.querySelectorAll('.section'));
+  const totalSteps = sections.length; // includes thank-you as final "stage"
+  let current = 0;
+  const answers = {};
+
+  const sproutTrack = document.getElementById('sproutTrack');
+  const stageLabel = document.getElementById('stageLabel');
+  const stageCount = totalSteps - 1; // don't count thank-you as a stage the user fills
+  for(let i=0;i<stageCount;i++){
+    const s = document.createElement('div');
+    s.className = 'sprout';
+    const h = 10 + Math.round((i/(stageCount-1)) * 30);
+    s.style.height = h + 'px';
+    sproutTrack.appendChild(s);
+  }
+  const sproutEls = Array.from(sproutTrack.children);
+
+  function updateProgress(){
+    sproutEls.forEach((el, i) => {
+      el.classList.toggle('active', i <= current && current < stageCount);
+    });
+    if(current < stageCount){
+      stageLabel.textContent = 'Stage ' + (current+1) + ' of ' + stageCount;
+      document.querySelector('.top-header p').style.display='';
+    } else {
+      stageLabel.textContent = 'Complete';
+    }
+  }
+
+  // Option groups — single-select by default, multi-select where marked
+  document.querySelectorAll('.options').forEach(group => {
+    const name = group.dataset.name;
+    const isMulti = group.dataset.multi === 'true';
+    group.addEventListener('click', (e) => {
+      const btn = e.target.closest('.opt-btn');
+      if(!btn) return;
+
+      if(isMulti){
+        btn.classList.toggle('selected');
+        const selectedValues = Array.from(group.children)
+          .filter(c => c.classList.contains('selected'))
+          .map(c => c.textContent);
+        answers[name] = selectedValues.join(', ');
+        if(selectedValues.length > 0) hideError(group);
+      } else {
+        Array.from(group.children).forEach(c => c.classList.remove('selected'));
+        btn.classList.add('selected');
+        answers[name] = btn.textContent;
+        hideError(group);
+        handleSkipLogic(name, btn.textContent);
+      }
+    });
+  });
+
+  function hideError(group){
+    const q = group.closest('.q');
+    const err = q ? q.querySelector('.error-msg') : null;
+    if(err) err.classList.remove('show');
+  }
+
+  function handleSkipLogic(name, value){
+    const block = document.querySelector('.skip-block[data-skip-for="'+name+'"]');
+    if(!block) return;
+    const requiredValue = block.dataset.skipValue;
+    if(requiredValue){
+      block.classList.toggle('show', value === requiredValue);
+    } else {
+      block.classList.toggle('show', value === 'Yes');
+    }
+  }
+
+  // Text inputs
+  document.querySelectorAll('input[data-name]').forEach(inp => {
+    inp.addEventListener('input', () => {
+      if(inp.dataset.numeric === 'true'){
+        inp.value = inp.value.replace(/[^0-9]/g, '');
+      }
+      answers[inp.dataset.name] = inp.value;
+    });
+  });
+
+  function validateSection(idx){
+    const section = sections[idx];
+    if(!section) return true;
+    let ok = true;
+    section.querySelectorAll('.q').forEach(q => {
+      const group = q.querySelector(':scope > .options');
+      const requiredInput = q.querySelector(':scope > input[data-name]');
+      const err = q.querySelector(':scope > .error-msg');
+      if(group){
+        const selected = Array.from(group.children).some(c => c.classList.contains('selected'));
+        if(!selected){
+          ok = false;
+          if(err) err.classList.add('show');
+        }
+      } else if(requiredInput && requiredInput.dataset.optional !== 'true'){
+        if(!requiredInput.value.trim()){
+          ok = false;
+          if(err) err.classList.add('show');
+        }
+      }
+    });
+    return ok;
+  }
+
+  const backBtn = document.getElementById('backBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const navRow = document.getElementById('navRow');
+
+  function render(){
+    sections.forEach((s,i) => s.classList.toggle('visible', i===current));
+    backBtn.style.visibility = current === 0 ? 'hidden' : 'visible';
+    if(current === stageCount){
+      // thank you screen
+      navRow.style.display = 'none';
+    } else {
+      navRow.style.display = 'flex';
+      nextBtn.textContent = current === stageCount - 1 ? 'Submit' : 'Continue';
+    }
+    updateProgress();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  nextBtn.addEventListener('click', () => {
+    // Section 7 (early access) has no strictly-required fields beyond the yes/no choice
+    const idx = current;
+    const isOptionalSection = sections[idx].dataset.section === '6';
+    let ok = true;
+    if(isOptionalSection){
+      const group = sections[idx].querySelector('.options');
+      const selected = Array.from(group.children).some(c => c.classList.contains('selected'));
+      ok = selected;
+      if(!ok) sections[idx].querySelector('.error-msg').classList.add('show');
+    } else {
+      ok = validateSection(idx);
+    }
+    if(!ok) return;
+
+    if(current < stageCount - 1){
+      current++;
+      render();
+    } else if(current === stageCount - 1){
+      const payload = buildPayload();
+      nextBtn.disabled = true;
+      nextBtn.textContent = 'Submitting…';
+      submitToSheet(payload).then(saved => {
+        current++;
+        render();
+        console.log('Survey response:', payload);
+        if(!saved){
+          document.getElementById('thanksIcon').textContent = '⚠️';
+          document.getElementById('thanksHeading').textContent = 'Response captured locally';
+          document.getElementById('thanksMessage').textContent = "We couldn't reach the response sheet (it may not be connected yet). Please tap the button below to download this response so it isn't lost, and send it to the survey owner.";
+        }
+      });
+    }
+  });
+
+  document.getElementById('backupDownloadBtn').addEventListener('click', () => {
+    downloadBackup(buildPayload());
+  });
+
+  backBtn.addEventListener('click', () => {
+    if(current > 0){ current--; render(); }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
